@@ -6,6 +6,7 @@ namespace NodeKit_POC.Models
         string Name,
         string Version,
         string StableRef,
+        string RecipeVersion,
         ToolSourceRoute SourceRoute,
         InstallMethod InstallMethod,
         RuntimeImageSpec Runtime,

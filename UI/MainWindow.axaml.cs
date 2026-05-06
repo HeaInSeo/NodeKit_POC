@@ -214,12 +214,16 @@ namespace NodeKit_POC.UI
             PreviewStableRefText.Text = candidate.StableRef;
             PreviewPackageText.Text = BuildPackageText(candidate);
             PreviewConnectivityText.Text = candidate.ConnectivityLabel;
-            PreviewOutputsText.Text = candidate.Route == ToolSourceRoute.ExternalConda
+            PreviewOutputsText.Text = candidate.Route is ToolSourceRoute.ExternalConda or ToolSourceRoute.LocalPackageMirror or ToolSourceRoute.InternalSeed
                 ? "environment.yml, multi-stage Dockerfile, lock metadata preview"
                 : "ToolInstallRecipe preview, route metadata, runtime image recipe draft";
-            PreviewHintText.Text = candidate.Route == ToolSourceRoute.ExternalConda
-                ? "Conda / Bioconda 경로는 실제 channel metadata를 사용해 package 후보를 찾고, Recipe Preview에서 environment.yml과 Dockerfile을 생성합니다."
-                : "이 route는 아직 부분 fixture 기반이지만 Candidate → Recipe → Generated 구조로 정규화됩니다.";
+            PreviewHintText.Text = candidate.Route switch
+            {
+                ToolSourceRoute.ExternalConda => "Conda / Bioconda 경로는 실제 channel metadata를 사용해 package 후보를 찾습니다. lock metadata는 아직 preview-only이며, 실행 command는 이후 단계에서 정의합니다.",
+                ToolSourceRoute.LocalPackageMirror => "내부 미러 경로는 local channel을 사용해 environment.yml을 생성합니다. 외부 bioconda 채널을 그대로 사용하지 않습니다.",
+                ToolSourceRoute.InternalSeed => "내부 시드 레시피도 실제 설치 가능한 runtime recipe로 정규화됩니다. 이 이미지는 실행 노드가 아니라 tool runtime 재료입니다.",
+                _ => "이 route는 아직 부분 fixture 기반이지만 Candidate → Recipe → Generated 구조로 정규화됩니다. 실제 command와 entrypoint는 이후 wrapper 단계에서 정의합니다.",
+            };
             OpenRecipePreviewButton.IsEnabled = true;
         }
 
@@ -245,17 +249,22 @@ namespace NodeKit_POC.UI
 
             RecipeToolText.Text = _selectedRecipe.Name;
             RecipeVersionText.Text = _selectedRecipe.Version;
+            RecipePrimaryToolText.Text = $"{_selectedRecipe.Name} ({_selectedRecipe.Version})";
             RecipeModeText.Text = _mode == ToolConnectivityMode.Connected ? "Connected" : "Disconnected";
             RecipeRouteText.Text = _selectedRecipe.SourceRoute.ToString();
             RecipeInstallMethodText.Text = _selectedRecipe.InstallMethod.ToString();
             RecipeStableRefText.Text = _selectedRecipe.StableRef;
+            RecipeVersionTagText.Text = _selectedRecipe.RecipeVersion;
+            RecipeFingerprintText.Text = _generatedRecipe.RecipeFingerprint;
             RecipeReproSeedText.Text = _selectedRecipe.ReproducibilitySeed;
+            RuntimePolicyText.Text = "이 이미지는 단일 Tool runtime image 재료입니다. 특정 command 또는 entrypoint를 고정하지 않으며, 실제 실행 script와 command는 이후 wrapper 또는 DAG node 이미지 단계에서 정의합니다.";
             RecipePackagesBox.Text = _selectedRecipe.Packages.Count == 0
-                ? "# package preview unavailable for this route"
+                ? "# primary tool package preview unavailable"
                 : string.Join(
                     "\n",
                     _selectedRecipe.Packages.Select(package =>
                         $"{package.Name}={package.Version} channel={package.Channel} platform={package.Platform}"));
+            ResolvedDependenciesBox.Text = "preview-only\nlock 단계에서 의존 패키지와 build string이 확정됩니다.";
             LockMetadataBox.Text = _generatedRecipe.LockMetadata ?? "# lock metadata preview unavailable";
             EnvironmentYamlPreviewBox.Text = _generatedRecipe.EnvironmentYaml ?? "# environment.yml preview unavailable";
             DockerfilePreviewBox.Text = _generatedRecipe.DockerfileContent;

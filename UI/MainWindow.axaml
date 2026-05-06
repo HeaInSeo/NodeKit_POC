@@ -25,8 +25,8 @@
 
           <Border Classes="panel" Background="#101B2F">
             <StackPanel Spacing="10">
-              <TextBlock Text="이번 PoC 목표" Classes="section-title" FontSize="15" />
-              <TextBlock Text="별도 문서 없이도 tool 출발점을 고르고, ToolInstallRecipe와 multi-stage Dockerfile 초안까지 자연스럽게 확인합니다."
+              <TextBlock Text="목표" Classes="section-title" FontSize="15" />
+              <TextBlock Text="하나의 Tool을 하나의 컨테이너 이미지로 만들기 위한 설치/환경 recipe를 생성합니다."
                          Foreground="#D8E1F2"
                          TextWrapping="Wrap"
                          FontSize="12"/>
@@ -45,11 +45,9 @@
 
           <Border Classes="panel">
             <StackPanel Spacing="12">
-              <TextBlock Text="현재 slice" Classes="section-title" FontSize="15" />
-              <TextBlock Text="Sprint 1" Foreground="White" FontWeight="SemiBold"/>
-              <TextBlock Text="Connected / Disconnected 모드와 시작점 선택" Classes="caption" TextWrapping="Wrap"/>
-              <TextBlock Text="Sprint 2" Foreground="White" FontWeight="SemiBold" Margin="0,8,0,0"/>
-              <TextBlock Text="후보 탐색, preview, recipe preview 진입" Classes="caption" TextWrapping="Wrap"/>
+              <TextBlock Text="이미지 정책" Classes="section-title" FontSize="15" />
+              <TextBlock Text="하나의 이미지 = 하나의 Primary Tool runtime" Classes="caption" TextWrapping="Wrap"/>
+              <TextBlock Text="실행 command, script, entrypoint는 이후 wrapper 또는 DAG node 단계에서 정의" Classes="caption" TextWrapping="Wrap" Margin="0,8,0,0"/>
             </StackPanel>
           </Border>
         </StackPanel>
@@ -71,8 +69,8 @@
 
       <Border Grid.Row="0" Background="#0A1425" BorderBrush="#16253F" BorderThickness="0,0,0,1" Padding="28,22">
         <StackPanel Spacing="8">
-          <TextBlock Text="Tool Source Route → Tool Runtime Image Recipe" Foreground="White" FontSize="30" FontWeight="Bold"/>
-          <TextBlock Text="Source candidate를 ToolInstallRecipe로 정규화하고, GeneratedToolImageRecipe preview로 이어지는 PoC입니다."
+          <TextBlock Text="Tool Runtime Image 만들기" Foreground="White" FontSize="30" FontWeight="Bold"/>
+          <TextBlock Text="하나의 Tool이 설치된 재사용 가능한 runtime image recipe를 만들고, 실제 실행 command는 이후 단계에서 정의합니다."
                      Foreground="#A9B7D2"
                      FontSize="13"
                      TextWrapping="Wrap"/>
@@ -349,7 +347,7 @@
               <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Spacing="10">
                   <TextBlock Text="Recipe Preview" Classes="section-title"/>
-                  <TextBlock Text="Candidate → ToolInstallRecipe → GeneratedToolImageRecipe 흐름으로 정규화된 결과를 확인합니다."
+                  <TextBlock Text="정규화된 ToolInstallRecipe와 generated runtime image recipe를 확인합니다."
                              Classes="caption"
                              TextWrapping="Wrap"/>
                 </StackPanel>
@@ -362,32 +360,60 @@
                 <Border Classes="panel">
                   <StackPanel Spacing="14">
                     <TextBlock Text="정규화 요약" Classes="section-title"/>
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                       <TextBlock Grid.Row="0" Text="Tool" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="0" Grid.Column="1" Name="RecipeToolText" Foreground="White"/>
                       <TextBlock Grid.Row="1" Text="Version" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="1" Grid.Column="1" Name="RecipeVersionText" Foreground="White"/>
-                      <TextBlock Grid.Row="2" Text="Mode" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="2" Grid.Column="1" Name="RecipeModeText" Foreground="White"/>
-                      <TextBlock Grid.Row="3" Text="Source Route" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="3" Grid.Column="1" Name="RecipeRouteText" Foreground="White"/>
-                      <TextBlock Grid.Row="4" Text="Install Method" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="4" Grid.Column="1" Name="RecipeInstallMethodText" Foreground="White"/>
-                      <TextBlock Grid.Row="5" Text="StableRef" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="5" Grid.Column="1" Name="RecipeStableRefText" Foreground="White" FontFamily="Monospace"/>
-                      <TextBlock Grid.Row="6" Text="Repro Seed" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="6" Grid.Column="1" Name="RecipeReproSeedText" Foreground="White" TextWrapping="Wrap"/>
+                      <TextBlock Grid.Row="2" Text="Primary Tool" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="2" Grid.Column="1" Name="RecipePrimaryToolText" Foreground="White"/>
+                      <TextBlock Grid.Row="3" Text="Mode" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="3" Grid.Column="1" Name="RecipeModeText" Foreground="White"/>
+                      <TextBlock Grid.Row="4" Text="Source Route" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="4" Grid.Column="1" Name="RecipeRouteText" Foreground="White"/>
+                      <TextBlock Grid.Row="5" Text="Install Method" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="5" Grid.Column="1" Name="RecipeInstallMethodText" Foreground="White"/>
+                      <TextBlock Grid.Row="6" Text="StableRef" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="6" Grid.Column="1" Name="RecipeStableRefText" Foreground="White" FontFamily="Monospace"/>
+                      <TextBlock Grid.Row="7" Text="Recipe Version" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="7" Grid.Column="1" Name="RecipeVersionTagText" Foreground="White"/>
+                      <TextBlock Grid.Row="8" Text="Recipe Fingerprint" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="8" Grid.Column="1" Name="RecipeFingerprintText" Foreground="White" TextWrapping="Wrap"/>
+                      <TextBlock Grid.Row="9" Text="Fingerprint Seed" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="9" Grid.Column="1" Name="RecipeReproSeedText" Foreground="White" TextWrapping="Wrap"/>
                     </Grid>
                   </StackPanel>
                 </Border>
 
                 <Border Classes="panel">
                   <StackPanel Spacing="10">
-                    <TextBlock Text="Packages" Classes="section-title"/>
+                    <TextBlock Text="이미지 정책" Classes="section-title"/>
+                    <TextBlock Name="RuntimePolicyText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="panel">
+                  <StackPanel Spacing="10">
+                    <TextBlock Text="Primary Tool Package" Classes="section-title"/>
                     <TextBox Name="RecipePackagesBox"
                              IsReadOnly="True"
                              AcceptsReturn="True"
                              Height="120"
+                             TextWrapping="Wrap"
+                             FontFamily="Monospace"
+                             Background="#0D1526"
+                             BorderBrush="#263A66"
+                             Foreground="#D8E1F2"/>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="panel">
+                  <StackPanel Spacing="10">
+                    <TextBlock Text="Resolved Dependencies" Classes="section-title"/>
+                    <TextBox Name="ResolvedDependenciesBox"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             Height="90"
                              TextWrapping="Wrap"
                              FontFamily="Monospace"
                              Background="#0D1526"

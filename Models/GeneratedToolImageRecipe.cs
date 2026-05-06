@@ -4,9 +4,13 @@ namespace NodeKit_POC.Models
         string Name,
         string Version,
         string StableRef,
+        string RecipeVersion,
         ToolSourceRoute SourceRoute,
         string DockerfileContent,
         string? EnvironmentYaml,
         string? LockMetadata,
+        string RecipeFingerprint,
+        string? EnvironmentYamlHash,
+        string DockerfileHash,
         string ReproducibilityFingerprintSeed);
 }
