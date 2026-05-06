@@ -1,0 +1,13 @@
+route: LocalPackageMirror
+name: samtools
+version: 1.19
+displayName: Samtools 1.19
+sourceLabel: Local Bioconda Mirror
+packageName: samtools
+channel: local-bioconda
+platform: linux-64
+requiresExternalConnection: false
+recommended: false
+metadata.mirror: harbor.local/conda/bioconda
+metadata.subdir: linux-64
+metadata.snapshot: 2026-05-06

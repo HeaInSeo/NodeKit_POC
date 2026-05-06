@@ -69,12 +69,28 @@ namespace NodeKit_POC.UI
             if (_mode == ToolConnectivityMode.Connected)
             {
                 _selectedStartPoint = ToolSourceStartPoint.ExternalSearch;
+
+                if (_selectedRouteFilter is not ToolSourceRoute.ExternalConda
+                    and not ToolSourceRoute.ExternalGitHubRelease
+                    and not ToolSourceRoute.ExternalOciRegistry
+                    and not null)
+                {
+                    _selectedRouteFilter = ToolSourceRoute.ExternalConda;
+                }
+
                 _selectedRouteFilter ??= ToolSourceRoute.ExternalConda;
             }
             else
             {
                 _selectedStartPoint = ToolSourceStartPoint.InternalSeed;
-                _selectedRouteFilter = ToolSourceRoute.InternalSeed;
+
+                if (_selectedRouteFilter is not ToolSourceRoute.InternalSeed
+                    and not ToolSourceRoute.LocalPackageMirror
+                    and not ToolSourceRoute.RecipeBundle
+                    and not ToolSourceRoute.InternalOciRegistry)
+                {
+                    _selectedRouteFilter = ToolSourceRoute.InternalSeed;
+                }
             }
 
             ApplyModeUI();
@@ -132,7 +148,7 @@ namespace NodeKit_POC.UI
             ExplorerView.IsVisible = false;
             RecipePreviewView.IsVisible = true;
             ApplyStepState(3);
-            UpdateStatus("ToolInstallRecipe와 generated image recipe 초안을 확인하세요.");
+            UpdateStatus("설치/환경 Recipe와 생성된 이미지 Recipe 초안을 확인하세요.");
         }
 
         private async Task RefreshCandidatesAsync()
@@ -195,7 +211,7 @@ namespace NodeKit_POC.UI
             if (candidate == null)
             {
                 PreviewTitleText.Text = "후보를 선택하세요.";
-                PreviewSubtitleText.Text = "선택한 후보가 ToolInstallRecipe 정규화의 입력이 됩니다.";
+                PreviewSubtitleText.Text = "선택한 후보가 설치/환경 Recipe 정규화의 입력이 됩니다.";
                 PreviewRouteText.Text = "-";
                 PreviewVersionText.Text = "-";
                 PreviewStableRefText.Text = "-";
@@ -216,7 +232,7 @@ namespace NodeKit_POC.UI
             PreviewConnectivityText.Text = candidate.ConnectivityLabel;
             PreviewOutputsText.Text = candidate.Route is ToolSourceRoute.ExternalConda or ToolSourceRoute.LocalPackageMirror or ToolSourceRoute.InternalSeed
                 ? "environment.yml, multi-stage Dockerfile, lock metadata preview"
-                : "ToolInstallRecipe preview, route metadata, runtime image recipe draft";
+                : "설치/환경 Recipe preview, route metadata, runtime image recipe draft";
             PreviewHintText.Text = candidate.Route switch
             {
                 ToolSourceRoute.ExternalConda => "검색 metadata는 channeldata.json 기반입니다. dependency lock은 아직 preview-only이며, 실제 lock은 repodata 또는 conda-lock 단계에서 확정됩니다.",

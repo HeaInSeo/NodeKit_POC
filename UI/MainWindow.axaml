@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:NodeKit_POC.Models"
         x:Class="NodeKit_POC.UI.MainWindow"
-        Title="NodeKit_POC — Tool Runtime Image Recipe"
+        Title="NodeKit — Tool Runtime Image Recipe"
         Width="1440"
         Height="960"
         MinWidth="1280"
@@ -19,8 +19,8 @@
       <DockPanel>
         <StackPanel Margin="24,28,18,24" Spacing="18">
           <StackPanel Spacing="6">
-            <TextBlock Text="NodeKit_POC" Foreground="White" FontSize="28" FontWeight="Bold" />
-            <TextBlock Text="Tool runtime image authoring slice" Classes="caption" />
+            <TextBlock Text="NodeKit" Foreground="White" FontSize="28" FontWeight="Bold" />
+            <TextBlock Text="Tool runtime image authoring" Classes="caption" />
           </StackPanel>
 
           <Border Classes="panel" Background="#101B2F">
@@ -346,8 +346,8 @@
             <Border Classes="panel">
               <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Spacing="10">
-                  <TextBlock Text="Recipe Preview" Classes="section-title"/>
-                  <TextBlock Text="정규화된 ToolInstallRecipe와 generated runtime image recipe를 확인합니다."
+                  <TextBlock Text="이미지 Recipe 미리보기" Classes="section-title"/>
+                  <TextBlock Text="정규화된 설치/환경 Recipe와 생성된 runtime image recipe를 확인합니다."
                              Classes="caption"
                              TextWrapping="Wrap"/>
                 </StackPanel>
@@ -379,7 +379,7 @@
                       <TextBlock Grid.Row="7" Grid.Column="1" Name="RecipeVersionTagText" Foreground="White"/>
                       <TextBlock Grid.Row="8" Text="Recipe Fingerprint" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="8" Grid.Column="1" Name="RecipeFingerprintText" Foreground="White" TextWrapping="Wrap"/>
-                      <TextBlock Grid.Row="9" Text="Fingerprint Seed" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="9" Text="재현성 입력값" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="9" Grid.Column="1" Name="RecipeReproSeedText" Foreground="White" TextWrapping="Wrap"/>
                       <TextBlock Grid.Row="10" Text="Environment Hash" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="10" Grid.Column="1" Name="RecipeEnvironmentHashText" Foreground="White" TextWrapping="Wrap"/>

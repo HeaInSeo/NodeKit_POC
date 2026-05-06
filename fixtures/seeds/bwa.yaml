@@ -1,0 +1,14 @@
+route: InternalSeed
+name: bwa
+version: 0.7.17
+displayName: BWA 0.7.17
+sourceLabel: Internal Seed Recipe
+packageName: bwa
+channel: local-bioconda
+platform: linux-64
+requiresExternalConnection: false
+recommended: true
+metadata.library: nodekit-seed-tools
+metadata.mirror: harbor.local/conda/seed-bioconda
+metadata.snapshot: 2026-05-06
+metadata.runtime: ubuntu:22.04

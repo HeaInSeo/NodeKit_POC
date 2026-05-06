@@ -1,0 +1,13 @@
+route: LocalPackageMirror
+name: bwa
+version: 0.7.17
+displayName: BWA 0.7.17
+sourceLabel: Local Bioconda Mirror
+packageName: bwa
+channel: local-bioconda
+platform: linux-64
+requiresExternalConnection: false
+recommended: true
+metadata.mirror: harbor.local/conda/bioconda
+metadata.subdir: linux-64
+metadata.snapshot: 2026-05-06

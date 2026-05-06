@@ -11,18 +11,12 @@ namespace NodeKit_POC.Services
         {
             var installMethod = ResolveInstallMethod(candidate.Route);
             var packages = BuildPackages(candidate, installMethod);
-            var metadata = candidate.Metadata
-                .Concat(new Dictionary<string, string?>
-                {
-                    ["sourceLabel"] = candidate.SourceLabel,
-                    ["packageName"] = candidate.PackageName,
-                    ["channel"] = candidate.Channel,
-                    ["platform"] = candidate.Platform,
-                    ["secondaryChannel"] = ResolveSecondaryChannel(candidate.Route),
-                }
-                .Where(item => !string.IsNullOrWhiteSpace(item.Value))
-                .Select(item => new KeyValuePair<string, string>(item.Key, item.Value!)))
-                .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+            var metadata = new Dictionary<string, string>(candidate.Metadata, StringComparer.OrdinalIgnoreCase);
+            Put(metadata, "sourceLabel", candidate.SourceLabel);
+            Put(metadata, "packageName", candidate.PackageName);
+            Put(metadata, "channel", candidate.Channel);
+            Put(metadata, "platform", candidate.Platform);
+            Put(metadata, "secondaryChannel", ResolveSecondaryChannel(candidate.Route));
             metadata["recipeVersion"] = "0.1.0";
 
             var reproducibilitySeed = string.Join(
@@ -100,6 +94,14 @@ namespace NodeKit_POC.Services
                 ToolSourceRoute.InternalSeed => "local-conda-forge",
                 _ => null,
             };
+        }
+
+        private static void Put(IDictionary<string, string> metadata, string key, string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                metadata[key] = value;
+            }
         }
     }
 }

@@ -1,0 +1,14 @@
+route: InternalSeed
+name: samtools
+version: 1.19
+displayName: Samtools 1.19
+sourceLabel: Internal Seed Recipe
+packageName: samtools
+channel: local-bioconda
+platform: linux-64
+requiresExternalConnection: false
+recommended: false
+metadata.library: nodekit-seed-tools
+metadata.mirror: harbor.local/conda/seed-bioconda
+metadata.snapshot: 2026-05-06
+metadata.runtime: ubuntu:22.04
