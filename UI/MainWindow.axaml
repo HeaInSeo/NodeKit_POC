@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:NodeKit_POC.Models"
         x:Class="NodeKit_POC.UI.MainWindow"
-        Title="NodeKit_POC — Tool Source Route Explorer"
+        Title="NodeKit_POC — Tool Runtime Image Recipe"
         Width="1440"
         Height="960"
         MinWidth="1280"
@@ -20,13 +20,13 @@
         <StackPanel Margin="24,28,18,24" Spacing="18">
           <StackPanel Spacing="6">
             <TextBlock Text="NodeKit_POC" Foreground="White" FontSize="28" FontWeight="Bold" />
-            <TextBlock Text="Tool image recipe authoring slice" Classes="caption" />
+            <TextBlock Text="Tool runtime image authoring slice" Classes="caption" />
           </StackPanel>
 
           <Border Classes="panel" Background="#101B2F">
             <StackPanel Spacing="10">
               <TextBlock Text="이번 PoC 목표" Classes="section-title" FontSize="15" />
-              <TextBlock Text="문서 없이도 seed 또는 검색 기반으로 tool 출발점을 선택하고, 안정적인 multi-stage Dockerfile 초안으로 이어지는 흐름을 확인합니다."
+              <TextBlock Text="별도 문서 없이도 tool 출발점을 고르고, ToolInstallRecipe와 multi-stage Dockerfile 초안까지 자연스럽게 확인합니다."
                          Foreground="#D8E1F2"
                          TextWrapping="Wrap"
                          FontSize="12"/>
@@ -35,21 +35,21 @@
 
           <Border Classes="panel">
             <StackPanel Spacing="12">
-              <TextBlock Text="현재 범위" Classes="section-title" FontSize="15" />
-              <TextBlock Text="Sprint 1" Foreground="White" FontWeight="SemiBold"/>
-              <TextBlock Text="외부 연결 기본 모드와 외부 검색 시작점 선택" Classes="caption" TextWrapping="Wrap"/>
-              <TextBlock Text="Sprint 2" Foreground="White" FontWeight="SemiBold" Margin="0,8,0,0"/>
-              <TextBlock Text="여러 tool 후보 검색, route별 결과, 선택 항목 미리보기" Classes="caption" TextWrapping="Wrap"/>
+              <TextBlock Text="핵심 UX 원칙" Classes="section-title" FontSize="15" />
+              <TextBlock Text="1. 한 화면에서 한 결정만" Foreground="#D8E1F2"/>
+              <TextBlock Text="2. 검색어 하나로 후보까지 진입" Foreground="#D8E1F2"/>
+              <TextBlock Text="3. 비교는 Explorer에서, 코드 확인은 Preview에서" Foreground="#D8E1F2"/>
+              <TextBlock Text="4. Dockerfile은 안정적인 템플릿으로 생성" Foreground="#D8E1F2"/>
             </StackPanel>
           </Border>
 
           <Border Classes="panel">
             <StackPanel Spacing="12">
-              <TextBlock Text="핵심 UX 원칙" Classes="section-title" FontSize="15" />
-              <TextBlock Text="1. 한 화면에서 한 결정만" Foreground="#D8E1F2"/>
-              <TextBlock Text="2. 검색어 입력은 최소화" Foreground="#D8E1F2"/>
-              <TextBlock Text="3. 검색어 하나로 후보까지 진입" Foreground="#D8E1F2"/>
-              <TextBlock Text="4. Dockerfile은 안정적인 템플릿으로 생성" Foreground="#D8E1F2"/>
+              <TextBlock Text="현재 slice" Classes="section-title" FontSize="15" />
+              <TextBlock Text="Sprint 1" Foreground="White" FontWeight="SemiBold"/>
+              <TextBlock Text="Connected / Disconnected 모드와 시작점 선택" Classes="caption" TextWrapping="Wrap"/>
+              <TextBlock Text="Sprint 2" Foreground="White" FontWeight="SemiBold" Margin="0,8,0,0"/>
+              <TextBlock Text="후보 탐색, preview, recipe preview 진입" Classes="caption" TextWrapping="Wrap"/>
             </StackPanel>
           </Border>
         </StackPanel>
@@ -71,8 +71,8 @@
 
       <Border Grid.Row="0" Background="#0A1425" BorderBrush="#16253F" BorderThickness="0,0,0,1" Padding="28,22">
         <StackPanel Spacing="8">
-          <TextBlock Text="Tool Source Route → Tool Image Recipe PoC" Foreground="White" FontSize="30" FontWeight="Bold"/>
-          <TextBlock Text="사용자가 적게 조작하고도 source route를 명시적으로 파악하고, Sprint 3 이후 정규화와 Dockerfile 생성으로 자연스럽게 넘어가는 PoC입니다."
+          <TextBlock Text="Tool Source Route → Tool Runtime Image Recipe" Foreground="White" FontSize="30" FontWeight="Bold"/>
+          <TextBlock Text="Source candidate를 ToolInstallRecipe로 정규화하고, GeneratedToolImageRecipe preview로 이어지는 PoC입니다."
                      Foreground="#A9B7D2"
                      FontSize="13"
                      TextWrapping="Wrap"/>
@@ -84,27 +84,27 @@
           <Border Background="#0F1A2B" BorderBrush="#24304D" BorderThickness="1" CornerRadius="16" Padding="20">
             <Grid ColumnDefinitions="Auto,16,Auto,16,Auto">
               <StackPanel Grid.Column="0" Spacing="4">
-                <Border Background="#2F67FF" CornerRadius="999" Width="32" Height="32">
+                <Border Name="Step1Badge" Background="#2F67FF" CornerRadius="999" Width="32" Height="32">
                   <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
                 </Border>
                 <TextBlock Text="Mode" Foreground="White" FontWeight="SemiBold"/>
-                <TextBlock Text="External-first" Classes="caption"/>
+                <TextBlock Text="Connected / Disconnected" Classes="caption"/>
               </StackPanel>
               <Rectangle Grid.Column="1" Height="2" Fill="#24304D" VerticalAlignment="Center"/>
               <StackPanel Grid.Column="2" Spacing="4">
                 <Border Name="Step2Badge" Background="#16253F" CornerRadius="999" Width="32" Height="32">
                   <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#8DA2C0" FontWeight="Bold"/>
                 </Border>
-                <TextBlock Text="Start Point" Foreground="White" FontWeight="SemiBold"/>
-                <TextBlock Text="External search first" Classes="caption"/>
+                <TextBlock Text="Explore" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="source candidates" Classes="caption"/>
               </StackPanel>
               <Rectangle Grid.Column="3" Height="2" Fill="#24304D" VerticalAlignment="Center"/>
               <StackPanel Grid.Column="4" Spacing="4">
                 <Border Name="Step3Badge" Background="#16253F" CornerRadius="999" Width="32" Height="32">
                   <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#8DA2C0" FontWeight="Bold"/>
                 </Border>
-                <TextBlock Text="Explore" Foreground="White" FontWeight="SemiBold"/>
-                <TextBlock Text="tool candidate preview" Classes="caption"/>
+                <TextBlock Text="Preview" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="recipe drafts" Classes="caption"/>
               </StackPanel>
             </Grid>
           </Border>
@@ -114,10 +114,10 @@
               <StackPanel Spacing="14">
                 <TextBlock Text="1. 연결 모드" Classes="section-title"/>
                 <Grid ColumnDefinitions="*,16,*">
-                  <Button Name="DisconnectedModeButton" Grid.Column="0" Classes="subtle" Padding="18,16" HorizontalContentAlignment="Left" IsEnabled="False">
+                  <Button Name="DisconnectedModeButton" Grid.Column="0" Classes="subtle" Padding="18,16" HorizontalContentAlignment="Left">
                     <StackPanel Spacing="6">
                       <TextBlock Text="오프라인 / 내부망" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
-                      <TextBlock Text="내부 seed / mirror / bundle 준비 후 활성화 예정" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="내부 seed, mirror, recipe bundle, 내부 registry를 기준으로 시작합니다." Classes="caption" TextWrapping="Wrap"/>
                     </StackPanel>
                   </Button>
                   <Button Name="ConnectedModeButton" Grid.Column="2" Classes="subtle" Padding="18,16" HorizontalContentAlignment="Left">
@@ -137,46 +137,76 @@
               <StackPanel Spacing="16">
                 <StackPanel Spacing="6">
                   <TextBlock Text="2. 시작점 선택" Classes="section-title"/>
-                  <TextBlock Text="지금은 실제로 동작하는 외부 시작 방법부터 검증합니다. 문서에 적은 Conda, GitHub Release, OCI Registry 경로를 바로 선택할 수 있게 합니다." Classes="caption" TextWrapping="Wrap"/>
+                  <TextBlock Text="현재 모드에서 사용할 출발점을 고르세요. 추천 경로부터 바로 탐색할 수 있습니다." Classes="caption" TextWrapping="Wrap"/>
                 </StackPanel>
 
-                <Grid ColumnDefinitions="*,16,*" RowDefinitions="Auto,16,Auto">
-                  <Button Name="InternalSeedButton" Grid.Row="0" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                <Grid Name="ConnectedStartPointsPanel" ColumnDefinitions="*,16,*" RowDefinitions="Auto,16,Auto">
+                  <Button Name="BiocondaStartButton" Grid.Row="0" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
                     <StackPanel Spacing="8">
-                      <TextBlock Text="Conda / Bioconda" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
-                      <TextBlock Text="패키지 이름과 버전을 기준으로 가장 빠르게 recipe 초안을 만드는 기본 경로" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="Conda / Bioconda에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="패키지 이름과 버전을 기준으로 가장 빠르게 recipe 초안을 만듭니다." Classes="caption" TextWrapping="Wrap"/>
                       <TextBlock Text="권장 경로" Foreground="#8ED19A" FontSize="11"/>
                     </StackPanel>
                   </Button>
 
-                  <Button Name="LocalMirrorButton" Grid.Row="0" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                  <Button Name="GitHubReleaseStartButton" Grid.Row="0" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
                     <StackPanel Spacing="8">
-                      <TextBlock Text="GitHub Release" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
-                      <TextBlock Text="release tag와 repository 정보를 기준으로 binary/source 출발점을 찾는 경로" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="GitHub Release에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="release tag와 repository 정보를 기준으로 binary/source 출발점을 찾습니다." Classes="caption" TextWrapping="Wrap"/>
                       <TextBlock Text="보조 경로" Foreground="#8ED19A" FontSize="11"/>
                     </StackPanel>
                   </Button>
 
-                  <Button Name="ExternalSearchButton" Grid.Row="2" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                  <Button Name="OciRegistryStartButton" Grid.Row="2" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
                     <StackPanel Spacing="8">
-                      <TextBlock Text="OCI Registry" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
-                      <TextBlock Text="기존 image tag 또는 registry 후보를 가져와 runtime 출발점으로 보는 경로" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="OCI Image에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="기존 image tag 또는 registry 후보를 runtime 출발점으로 사용합니다." Classes="caption" TextWrapping="Wrap"/>
                       <TextBlock Text="이미지 기반 경로" Foreground="#8ED19A" FontSize="11"/>
                     </StackPanel>
                   </Button>
 
-                  <Button Name="RecipeBundleButton" Grid.Row="2" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left" IsEnabled="False">
+                  <Button Name="AllExternalRoutesStartButton" Grid.Row="2" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
                     <StackPanel Spacing="8">
-                      <TextBlock Text="Recipe Bundle" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
-                      <TextBlock Text="현재는 미구현. import 흐름 준비 후 활성화" Classes="caption" TextWrapping="Wrap"/>
-                      <TextBlock Text="준비 중" Foreground="#8DA2C0" FontSize="11"/>
+                      <TextBlock Text="외부 전체 후보 비교" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="Bioconda, GitHub Release, OCI Registry 후보를 한 화면에서 비교합니다." Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="탐색 중심" Foreground="#8ED19A" FontSize="11"/>
                     </StackPanel>
                   </Button>
                 </Grid>
 
-                <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
-                  <TextBlock Name="SelectionHintText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
-                </Border>
+                <Grid Name="DisconnectedStartPointsPanel" IsVisible="False" ColumnDefinitions="*,16,*" RowDefinitions="Auto,16,Auto">
+                  <Button Name="InternalSeedStartButton" Grid.Row="0" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="내부 시드 레시피에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="검증된 내부 seed recipe를 출발점으로 사용합니다." Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="오프라인 기본 경로" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="LocalMirrorStartButton" Grid.Row="0" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="내부 패키지 미러에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="내부 conda/bioconda mirror 또는 package cache를 기준으로 시작합니다." Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="mirror 경로" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="RecipeBundleStartButton" Grid.Row="2" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="Recipe Bundle 가져오기" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="미리 반입된 recipe bundle을 선택해 시작합니다." Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="반입 경로" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="InternalRegistryStartButton" Grid.Row="2" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="내부 Harbor / Registry에서 시작" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="내부 registry의 기존 runtime image를 출발점으로 사용합니다." Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="registry 경로" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+                </Grid>
               </StackPanel>
             </Border>
           </StackPanel>
@@ -185,8 +215,8 @@
             <Border Classes="panel">
               <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Spacing="10">
-                  <TextBlock Text="3. Source Explorer" Classes="section-title"/>
-                  <WrapPanel Orientation="Horizontal" ItemWidth="180" ItemHeight="36">
+                  <TextBlock Text="Source Explorer" Classes="section-title"/>
+                  <WrapPanel Orientation="Horizontal">
                     <Border Background="#132542" CornerRadius="999" Padding="12,7" Margin="0,0,8,8">
                       <TextBlock Name="ExplorerModeChipText" Foreground="White"/>
                     </Border>
@@ -194,7 +224,7 @@
                       <TextBlock Name="ExplorerRouteChipText" Foreground="White"/>
                     </Border>
                     <Border Background="#132542" CornerRadius="999" Padding="12,7" Margin="0,0,8,8">
-                      <TextBlock Name="ExplorerStableGoalText" Foreground="White" Text="Search: any tool name"/>
+                      <TextBlock Name="ExplorerSearchChipText" Foreground="White"/>
                     </Border>
                   </WrapPanel>
                 </StackPanel>
@@ -215,12 +245,21 @@
                              BorderThickness="1"
                              Foreground="White"
                              Padding="12"/>
-                    <WrapPanel Orientation="Horizontal" ItemWidth="140" ItemHeight="36">
-                      <Button Name="ExplorerInternalSeedButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Bioconda</Button>
-                      <Button Name="ExplorerLocalMirrorButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">GitHub Release</Button>
-                      <Button Name="ExplorerExternalSearchButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">OCI Registry</Button>
-                      <Button Name="ExplorerRecipeBundleButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">전체 외부</Button>
+
+                    <WrapPanel Name="ConnectedFiltersPanel" Orientation="Horizontal">
+                      <Button Name="BiocondaFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Bioconda</Button>
+                      <Button Name="GitHubReleaseFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">GitHub Release</Button>
+                      <Button Name="OciRegistryFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">OCI Registry</Button>
+                      <Button Name="AllExternalFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">전체 외부</Button>
                     </WrapPanel>
+
+                    <WrapPanel Name="DisconnectedFiltersPanel" IsVisible="False" Orientation="Horizontal">
+                      <Button Name="InternalSeedFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Internal Seed</Button>
+                      <Button Name="LocalMirrorFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Local Mirror</Button>
+                      <Button Name="RecipeBundleFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Recipe Bundle</Button>
+                      <Button Name="InternalRegistryFilterButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Internal Registry</Button>
+                    </WrapPanel>
+
                     <TextBlock Name="ExplorerHintText" Classes="caption" TextWrapping="Wrap"/>
                   </StackPanel>
                 </Border>
@@ -288,29 +327,99 @@
                       <TextBlock Grid.Row="3" Grid.Column="1" Name="PreviewConnectivityText" Foreground="White"/>
                       <TextBlock Grid.Row="4" Text="패키지/채널" Foreground="#8DA2C0"/>
                       <TextBlock Grid.Row="4" Grid.Column="1" Name="PreviewPackageText" Foreground="White"/>
-                      <TextBlock Grid.Row="5" Text="메타데이터" Foreground="#8DA2C0"/>
-                      <TextBlock Grid.Row="5" Grid.Column="1" Name="PreviewMetadataText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                      <TextBlock Grid.Row="5" Text="생성 예정" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="5" Grid.Column="1" Name="PreviewOutputsText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
                     </Grid>
-                  </StackPanel>
-                </Border>
 
-                <Border Classes="panel">
-                  <StackPanel Spacing="12">
-                    <TextBlock Text="Sprint 2에서 확인되는 생성물" Classes="section-title"/>
-                    <TextBlock Name="GeneratedArtifactsText" Foreground="White" TextWrapping="Wrap"/>
                     <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
                       <TextBlock Name="PreviewHintText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
                     </Border>
                   </StackPanel>
                 </Border>
 
+                <Button Name="OpenRecipePreviewButton" Classes="primary" Padding="16,12" IsEnabled="False">
+                  Recipe Preview 보기
+                </Button>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+
+          <StackPanel Name="RecipePreviewView" IsVisible="False" Spacing="20">
+            <Border Classes="panel">
+              <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="10">
+                  <TextBlock Text="Recipe Preview" Classes="section-title"/>
+                  <TextBlock Text="Candidate → ToolInstallRecipe → GeneratedToolImageRecipe 흐름으로 정규화된 결과를 확인합니다."
+                             Classes="caption"
+                             TextWrapping="Wrap"/>
+                </StackPanel>
+                <Button Name="BackToExplorerButton" Grid.Column="1" Classes="subtle" Padding="14,10">탐색으로 돌아가기</Button>
+              </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="1.1*,16,1.4*">
+              <StackPanel Grid.Column="0" Spacing="16">
+                <Border Classes="panel">
+                  <StackPanel Spacing="14">
+                    <TextBlock Text="정규화 요약" Classes="section-title"/>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                      <TextBlock Grid.Row="0" Text="Tool" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="0" Grid.Column="1" Name="RecipeToolText" Foreground="White"/>
+                      <TextBlock Grid.Row="1" Text="Version" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="1" Grid.Column="1" Name="RecipeVersionText" Foreground="White"/>
+                      <TextBlock Grid.Row="2" Text="Mode" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="2" Grid.Column="1" Name="RecipeModeText" Foreground="White"/>
+                      <TextBlock Grid.Row="3" Text="Source Route" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="3" Grid.Column="1" Name="RecipeRouteText" Foreground="White"/>
+                      <TextBlock Grid.Row="4" Text="Install Method" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="4" Grid.Column="1" Name="RecipeInstallMethodText" Foreground="White"/>
+                      <TextBlock Grid.Row="5" Text="StableRef" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="5" Grid.Column="1" Name="RecipeStableRefText" Foreground="White" FontFamily="Monospace"/>
+                      <TextBlock Grid.Row="6" Text="Repro Seed" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="6" Grid.Column="1" Name="RecipeReproSeedText" Foreground="White" TextWrapping="Wrap"/>
+                    </Grid>
+                  </StackPanel>
+                </Border>
+
                 <Border Classes="panel">
                   <StackPanel Spacing="10">
-                    <TextBlock Text="environment.yml 초안" Classes="section-title"/>
+                    <TextBlock Text="Packages" Classes="section-title"/>
+                    <TextBox Name="RecipePackagesBox"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             Height="120"
+                             TextWrapping="Wrap"
+                             FontFamily="Monospace"
+                             Background="#0D1526"
+                             BorderBrush="#263A66"
+                             Foreground="#D8E1F2"/>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="panel">
+                  <StackPanel Spacing="10">
+                    <TextBlock Text="Lock Metadata Preview" Classes="section-title"/>
+                    <TextBox Name="LockMetadataBox"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             Height="180"
+                             TextWrapping="Wrap"
+                             FontFamily="Monospace"
+                             Background="#0D1526"
+                             BorderBrush="#263A66"
+                             Foreground="#D8E1F2"/>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Grid.Column="2" Spacing="16">
+                <Border Classes="panel">
+                  <StackPanel Spacing="10">
+                    <TextBlock Text="environment.yml" Classes="section-title"/>
                     <TextBox Name="EnvironmentYamlPreviewBox"
                              IsReadOnly="True"
                              AcceptsReturn="True"
-                             Height="140"
+                             Height="180"
                              TextWrapping="Wrap"
                              FontFamily="Monospace"
                              Background="#0D1526"
@@ -321,11 +430,11 @@
 
                 <Border Classes="panel">
                   <StackPanel Spacing="10">
-                    <TextBlock Text="Multi-stage Dockerfile 초안" Classes="section-title"/>
+                    <TextBlock Text="Multi-stage Dockerfile" Classes="section-title"/>
                     <TextBox Name="DockerfilePreviewBox"
                              IsReadOnly="True"
                              AcceptsReturn="True"
-                             Height="240"
+                             Height="420"
                              TextWrapping="Wrap"
                              FontFamily="Monospace"
                              Background="#0D1526"
@@ -333,10 +442,6 @@
                              Foreground="#D8E1F2"/>
                   </StackPanel>
                 </Border>
-
-                <Button Name="StartWithCandidateButton" Classes="primary" Padding="16,12" IsEnabled="False">
-                  이 출발점으로 시작
-                </Button>
               </StackPanel>
             </Grid>
           </StackPanel>

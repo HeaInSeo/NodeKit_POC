@@ -4,6 +4,7 @@ namespace NodeKit_POC.Models
     {
         InternalSeed,
         LocalPackageMirror,
+        InternalOciRegistry,
         ExternalSearch,
         RecipeBundle,
     }

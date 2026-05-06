@@ -267,6 +267,22 @@ namespace NodeKit_POC.Services
                         ["bundle"] = "samtools-recipe-bundle",
                         ["evidence"] = "pre-imported",
                     }),
+                new(
+                    ToolSourceRoute.InternalOciRegistry,
+                    "bwa",
+                    "0.7.17",
+                    "bwa-tool-runtime@sha256:preview",
+                    "Internal Harbor",
+                    "bwa",
+                    null,
+                    "linux-amd64",
+                    false,
+                    true,
+                    new Dictionary<string, string>
+                    {
+                        ["image"] = "harbor.local/tooling/bwa-tool-runtime@sha256:preview",
+                        ["evidence"] = "internal-registry-preview",
+                    }),
             });
 
         public IReadOnlyList<ToolSourceCandidate> SearchCandidates(
@@ -303,6 +319,7 @@ namespace NodeKit_POC.Services
             {
                 ToolSourceStartPoint.InternalSeed => route == ToolSourceRoute.InternalSeed,
                 ToolSourceStartPoint.LocalPackageMirror => route == ToolSourceRoute.LocalPackageMirror,
+                ToolSourceStartPoint.InternalOciRegistry => route == ToolSourceRoute.InternalOciRegistry,
                 ToolSourceStartPoint.ExternalSearch => route == ToolSourceRoute.ExternalConda
                     || route == ToolSourceRoute.ExternalGitHubRelease
                     || route == ToolSourceRoute.ExternalOciRegistry,
