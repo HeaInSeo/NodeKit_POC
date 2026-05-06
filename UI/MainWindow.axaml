@@ -1,0 +1,317 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:NodeKit_POC.Models"
+        x:Class="NodeKit_POC.UI.MainWindow"
+        Title="NodeKit_POC — Tool Source Route Explorer"
+        Width="1440"
+        Height="960"
+        MinWidth="1280"
+        MinHeight="860"
+        WindowStartupLocation="CenterScreen"
+        Background="#08111F">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="240" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Border Grid.Column="0" Background="#07111E" BorderBrush="#16253F" BorderThickness="0,0,1,0">
+      <DockPanel>
+        <StackPanel Margin="24,28,18,24" Spacing="18">
+          <StackPanel Spacing="6">
+            <TextBlock Text="NodeKit_POC" Foreground="White" FontSize="28" FontWeight="Bold" />
+            <TextBlock Text="Tool image recipe authoring slice" Classes="caption" />
+          </StackPanel>
+
+          <Border Classes="panel" Background="#101B2F">
+            <StackPanel Spacing="10">
+              <TextBlock Text="이번 PoC 목표" Classes="section-title" FontSize="15" />
+              <TextBlock Text="문서 없이도 seed 또는 검색 기반으로 tool 출발점을 선택하고, 안정적인 multi-stage Dockerfile 초안으로 이어지는 흐름을 확인합니다."
+                         Foreground="#D8E1F2"
+                         TextWrapping="Wrap"
+                         FontSize="12"/>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="panel">
+            <StackPanel Spacing="12">
+              <TextBlock Text="현재 범위" Classes="section-title" FontSize="15" />
+              <TextBlock Text="Sprint 1" Foreground="White" FontWeight="SemiBold"/>
+              <TextBlock Text="Connected / Disconnected 모드와 시작점 선택" Classes="caption" TextWrapping="Wrap"/>
+              <TextBlock Text="Sprint 2" Foreground="White" FontWeight="SemiBold" Margin="0,8,0,0"/>
+              <TextBlock Text="여러 tool 후보 검색, route별 결과, 선택 항목 미리보기" Classes="caption" TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="panel">
+            <StackPanel Spacing="12">
+              <TextBlock Text="핵심 UX 원칙" Classes="section-title" FontSize="15" />
+              <TextBlock Text="1. 한 화면에서 한 결정만" Foreground="#D8E1F2"/>
+              <TextBlock Text="2. 검색어 입력은 최소화" Foreground="#D8E1F2"/>
+              <TextBlock Text="3. 검색어 하나로 후보까지 진입" Foreground="#D8E1F2"/>
+              <TextBlock Text="4. Dockerfile은 안정적인 템플릿으로 생성" Foreground="#D8E1F2"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Margin="20,0,20,20" Background="#0F1A2B" BorderBrush="#24304D" BorderThickness="1" CornerRadius="12" Padding="14">
+          <StackPanel Spacing="6">
+            <TextBlock Text="상태" Foreground="#8DA2C0" FontSize="11"/>
+            <TextBlock Name="StatusText" Text="준비" Foreground="White" TextWrapping="Wrap"/>
+          </StackPanel>
+        </Border>
+      </DockPanel>
+    </Border>
+
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Background="#0A1425" BorderBrush="#16253F" BorderThickness="0,0,0,1" Padding="28,22">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Tool Source Route → Tool Image Recipe PoC" Foreground="White" FontSize="30" FontWeight="Bold"/>
+          <TextBlock Text="사용자가 적게 조작하고도 source route를 명시적으로 파악하고, Sprint 3 이후 정규화와 Dockerfile 생성으로 자연스럽게 넘어가는 PoC입니다."
+                     Foreground="#A9B7D2"
+                     FontSize="13"
+                     TextWrapping="Wrap"/>
+        </StackPanel>
+      </Border>
+
+      <ScrollViewer Grid.Row="1">
+        <StackPanel Margin="28,24,28,28" Spacing="20">
+          <Border Background="#0F1A2B" BorderBrush="#24304D" BorderThickness="1" CornerRadius="16" Padding="20">
+            <Grid ColumnDefinitions="Auto,16,Auto,16,Auto">
+              <StackPanel Grid.Column="0" Spacing="4">
+                <Border Background="#2F67FF" CornerRadius="999" Width="32" Height="32">
+                  <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
+                </Border>
+                <TextBlock Text="Mode" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="Connected / Disconnected" Classes="caption"/>
+              </StackPanel>
+              <Rectangle Grid.Column="1" Height="2" Fill="#24304D" VerticalAlignment="Center"/>
+              <StackPanel Grid.Column="2" Spacing="4">
+                <Border Name="Step2Badge" Background="#16253F" CornerRadius="999" Width="32" Height="32">
+                  <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#8DA2C0" FontWeight="Bold"/>
+                </Border>
+                <TextBlock Text="Start Point" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="Source route pick" Classes="caption"/>
+              </StackPanel>
+              <Rectangle Grid.Column="3" Height="2" Fill="#24304D" VerticalAlignment="Center"/>
+              <StackPanel Grid.Column="4" Spacing="4">
+                <Border Name="Step3Badge" Background="#16253F" CornerRadius="999" Width="32" Height="32">
+                  <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#8DA2C0" FontWeight="Bold"/>
+                </Border>
+                <TextBlock Text="Explore" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="tool candidate preview" Classes="caption"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <StackPanel Name="SelectionView" Spacing="20">
+            <Border Classes="panel">
+              <StackPanel Spacing="14">
+                <TextBlock Text="1. 연결 모드 선택" Classes="section-title"/>
+                <Grid ColumnDefinitions="*,16,*">
+                  <Button Name="DisconnectedModeButton" Grid.Column="0" Classes="subtle" Padding="18,16" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="6">
+                      <TextBlock Text="오프라인 / 내부망" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="외부 호출 없이 내부 seed, 미러, imported bundle만 사용합니다." Classes="caption" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </Button>
+                  <Button Name="ConnectedModeButton" Grid.Column="2" Classes="subtle" Padding="18,16" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="6">
+                      <TextBlock Text="외부 연결" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="Bioconda, GitHub Release, OCI Registry를 검색해 초안을 빠르게 만듭니다." Classes="caption" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
+                  <TextBlock Name="ModeHintText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                </Border>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="panel">
+              <StackPanel Spacing="16">
+                <StackPanel Spacing="6">
+                  <TextBlock Text="2. 시작점 선택" Classes="section-title"/>
+                  <TextBlock Text="문서 없이도 바로 시작할 수 있도록, 설명이 붙은 4개의 출발점만 제공합니다." Classes="caption" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <Grid ColumnDefinitions="*,16,*" RowDefinitions="Auto,16,Auto">
+                  <Button Name="InternalSeedButton" Grid.Row="0" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="내부 시드 레시피" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="BWA, Samtools, GATK, FastQC 같은 seed fixture에서 바로 시작" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="추천: 가장 적은 제스처" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="LocalMirrorButton" Grid.Row="0" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="내부 패키지 미러" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="내부 conda / bioconda mirror 또는 cache된 package에서 시작" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="내부 표준화 흐름" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="ExternalSearchButton" Grid.Row="2" Grid.Column="0" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="외부 소스 검색" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="Bioconda, GitHub Release, OCI 후보를 찾아 recipe 초안을 생성" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="Connected 모드에서만 활성화" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Name="RecipeBundleButton" Grid.Row="2" Grid.Column="2" Classes="subtle" Padding="18" HorizontalContentAlignment="Left">
+                    <StackPanel Spacing="8">
+                      <TextBlock Text="Recipe Bundle" Foreground="White" FontWeight="SemiBold" FontSize="16"/>
+                      <TextBlock Text="이미 반입된 bundle이나 imported recipe에서 바로 시작" Classes="caption" TextWrapping="Wrap"/>
+                      <TextBlock Text="Air-gapped 친화적" Foreground="#8ED19A" FontSize="11"/>
+                    </StackPanel>
+                  </Button>
+                </Grid>
+
+                <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
+                  <TextBlock Name="SelectionHintText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                </Border>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Name="ExplorerView" IsVisible="False" Spacing="20">
+            <Border Classes="panel">
+              <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="10">
+                  <TextBlock Text="3. Source Explorer" Classes="section-title"/>
+                  <WrapPanel Orientation="Horizontal" ItemWidth="180" ItemHeight="36">
+                    <Border Background="#132542" CornerRadius="999" Padding="12,7" Margin="0,0,8,8">
+                      <TextBlock Name="ExplorerModeChipText" Foreground="White"/>
+                    </Border>
+                    <Border Background="#132542" CornerRadius="999" Padding="12,7" Margin="0,0,8,8">
+                      <TextBlock Name="ExplorerRouteChipText" Foreground="White"/>
+                    </Border>
+                    <Border Background="#132542" CornerRadius="999" Padding="12,7" Margin="0,0,8,8">
+                      <TextBlock Name="ExplorerStableGoalText" Foreground="White" Text="Search: any tool name"/>
+                    </Border>
+                  </WrapPanel>
+                </StackPanel>
+                <Button Name="BackToSelectionButton" Grid.Column="1" Classes="subtle" Padding="14,10">이전으로</Button>
+              </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="2.2*,16,1.1*">
+              <StackPanel Grid.Column="0" Spacing="16">
+                <Border Classes="panel">
+                  <StackPanel Spacing="14">
+                    <TextBlock Text="검색 또는 탐색" Classes="section-title"/>
+                    <TextBox Name="SearchBox"
+                             PlaceholderText="예: bwa, samtools, gatk, fastqc"
+                             Text="bwa"
+                             Background="#0D1526"
+                             BorderBrush="#263A66"
+                             BorderThickness="1"
+                             Foreground="White"
+                             Padding="12"/>
+                    <WrapPanel Orientation="Horizontal" ItemWidth="140" ItemHeight="36">
+                      <Button Name="ExplorerInternalSeedButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">내부 시드</Button>
+                      <Button Name="ExplorerLocalMirrorButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">내부 미러</Button>
+                      <Button Name="ExplorerExternalSearchButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">외부 검색</Button>
+                      <Button Name="ExplorerRecipeBundleButton" Classes="subtle" Padding="10,6" Margin="0,0,8,8">Recipe Bundle</Button>
+                    </WrapPanel>
+                    <TextBlock Name="ExplorerHintText" Classes="caption" TextWrapping="Wrap"/>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="panel">
+                  <StackPanel Spacing="12">
+                    <TextBlock Name="CandidatesHeaderText" Text="후보 목록" Classes="section-title"/>
+                    <Border Name="EmptyCandidatesPanel" IsVisible="False" Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
+                      <TextBlock Name="EmptyCandidatesText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                    </Border>
+
+                    <ListBox Name="CandidatesListBox" Background="Transparent" BorderThickness="0" Foreground="White">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:ToolSourceCandidate">
+                          <Border Background="#0D1526" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="*,Auto">
+                              <StackPanel Spacing="6">
+                                <TextBlock Text="{Binding DisplayName}" Foreground="White" FontSize="17" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding SourceLabel}" Foreground="#A9B7D2"/>
+                                <WrapPanel Orientation="Horizontal">
+                                  <Border Background="#132542" CornerRadius="999" Padding="10,4" Margin="0,0,8,8">
+                                    <TextBlock Text="{Binding RouteLabel}" Foreground="#85AFFF" FontSize="11"/>
+                                  </Border>
+                                  <Border Background="#132542" CornerRadius="999" Padding="10,4" Margin="0,0,8,8">
+                                    <TextBlock Text="{Binding ConnectivityLabel}" Foreground="#D8E1F2" FontSize="11"/>
+                                  </Border>
+                                  <Border Background="#14311F" CornerRadius="999" Padding="10,4" Margin="0,0,8,8">
+                                    <TextBlock Text="{Binding RecommendationLabel}" Foreground="#8ED19A" FontSize="11"/>
+                                  </Border>
+                                </WrapPanel>
+                              </StackPanel>
+
+                              <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right">
+                                <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="999" Padding="12,6">
+                                  <TextBlock Text="{Binding Version}" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="{Binding StableRef}" Foreground="#8DA2C0" FontFamily="Monospace" FontSize="11" HorizontalAlignment="Right"/>
+                              </StackPanel>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+
+              <StackPanel Grid.Column="2" Spacing="16">
+                <Border Classes="panel">
+                  <StackPanel Spacing="14">
+                    <TextBlock Text="선택 항목 미리보기" Classes="section-title"/>
+                    <StackPanel Spacing="6">
+                      <TextBlock Name="PreviewTitleText" Text="후보를 선택하세요." Foreground="White" FontSize="20" FontWeight="SemiBold"/>
+                      <TextBlock Name="PreviewSubtitleText" Classes="caption" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                      <TextBlock Grid.Row="0" Text="Route" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="0" Grid.Column="1" Name="PreviewRouteText" Foreground="White"/>
+                      <TextBlock Grid.Row="1" Text="Version" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="1" Grid.Column="1" Name="PreviewVersionText" Foreground="White"/>
+                      <TextBlock Grid.Row="2" Text="StableRef" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="2" Grid.Column="1" Name="PreviewStableRefText" Foreground="White" FontFamily="Monospace"/>
+                      <TextBlock Grid.Row="3" Text="외부 연결" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="3" Grid.Column="1" Name="PreviewConnectivityText" Foreground="White"/>
+                      <TextBlock Grid.Row="4" Text="패키지/채널" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="4" Grid.Column="1" Name="PreviewPackageText" Foreground="White"/>
+                      <TextBlock Grid.Row="5" Text="메타데이터" Foreground="#8DA2C0"/>
+                      <TextBlock Grid.Row="5" Grid.Column="1" Name="PreviewMetadataText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                    </Grid>
+                  </StackPanel>
+                </Border>
+
+                <Border Classes="panel">
+                  <StackPanel Spacing="12">
+                    <TextBlock Text="Sprint 2에서 확인되는 생성물" Classes="section-title"/>
+                    <TextBlock Name="GeneratedArtifactsText" Foreground="White" TextWrapping="Wrap"/>
+                    <Border Background="#111D31" BorderBrush="#263A66" BorderThickness="1" CornerRadius="12" Padding="14">
+                      <TextBlock Name="PreviewHintText" Foreground="#D8E1F2" TextWrapping="Wrap"/>
+                    </Border>
+                  </StackPanel>
+                </Border>
+
+                <Button Name="StartWithCandidateButton" Classes="primary" Padding="16,12" IsEnabled="False">
+                  이 출발점으로 시작
+                </Button>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</Window>
