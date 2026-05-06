@@ -18,13 +18,15 @@ namespace NodeKit_POC.Services
                     "BWA 0.7.17",
                     "Internal Seed Recipe",
                     "bwa",
-                    "seed-library",
+                    "local-bioconda",
                     "linux-64",
                     false,
                     true,
                     new Dictionary<string, string>
                     {
                         ["library"] = "nodekit-seed-tools",
+                        ["mirror"] = "harbor.local/conda/seed-bioconda",
+                        ["snapshot"] = "2026-05-06",
                         ["runtime"] = "ubuntu:22.04",
                     }),
                 new(
@@ -34,13 +36,15 @@ namespace NodeKit_POC.Services
                     "Samtools 1.19",
                     "Internal Seed Recipe",
                     "samtools",
-                    "seed-library",
+                    "local-bioconda",
                     "linux-64",
                     false,
                     false,
                     new Dictionary<string, string>
                     {
                         ["library"] = "nodekit-seed-tools",
+                        ["mirror"] = "harbor.local/conda/seed-bioconda",
+                        ["snapshot"] = "2026-05-06",
                         ["runtime"] = "ubuntu:22.04",
                     }),
                 new(
@@ -50,13 +54,15 @@ namespace NodeKit_POC.Services
                     "GATK 4.1.2.0",
                     "Internal Seed Recipe",
                     "gatk4",
-                    "seed-library",
+                    "local-bioconda",
                     "linux-64",
                     false,
                     false,
                     new Dictionary<string, string>
                     {
                         ["library"] = "nodekit-seed-tools",
+                        ["mirror"] = "harbor.local/conda/seed-bioconda",
+                        ["snapshot"] = "2026-05-06",
                         ["runtime"] = "ubuntu:22.04",
                     }),
                 new(
@@ -66,13 +72,15 @@ namespace NodeKit_POC.Services
                     "FastQC 0.11.8",
                     "Internal Seed Recipe",
                     "fastqc",
-                    "seed-library",
+                    "local-bioconda",
                     "linux-64",
                     false,
                     false,
                     new Dictionary<string, string>
                     {
                         ["library"] = "nodekit-seed-tools",
+                        ["mirror"] = "harbor.local/conda/seed-bioconda",
+                        ["snapshot"] = "2026-05-06",
                         ["runtime"] = "ubuntu:22.04",
                     }),
                 new(
@@ -90,6 +98,7 @@ namespace NodeKit_POC.Services
                     {
                         ["mirror"] = "harbor.local/conda/bioconda",
                         ["subdir"] = "linux-64",
+                        ["snapshot"] = "2026-05-06",
                     }),
                 new(
                     ToolSourceRoute.LocalPackageMirror,
@@ -106,6 +115,7 @@ namespace NodeKit_POC.Services
                     {
                         ["mirror"] = "harbor.local/conda/bioconda",
                         ["subdir"] = "linux-64",
+                        ["snapshot"] = "2026-05-06",
                     }),
                 new(
                     ToolSourceRoute.LocalPackageMirror,
@@ -122,6 +132,7 @@ namespace NodeKit_POC.Services
                     {
                         ["mirror"] = "harbor.local/conda/bioconda",
                         ["subdir"] = "linux-64",
+                        ["snapshot"] = "2026-05-06",
                     }),
                 new(
                     ToolSourceRoute.ExternalConda,

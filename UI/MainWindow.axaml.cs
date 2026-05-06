@@ -219,9 +219,9 @@ namespace NodeKit_POC.UI
                 : "ToolInstallRecipe preview, route metadata, runtime image recipe draft";
             PreviewHintText.Text = candidate.Route switch
             {
-                ToolSourceRoute.ExternalConda => "Conda / Bioconda 경로는 실제 channel metadata를 사용해 package 후보를 찾습니다. lock metadata는 아직 preview-only이며, 실행 command는 이후 단계에서 정의합니다.",
-                ToolSourceRoute.LocalPackageMirror => "내부 미러 경로는 local channel을 사용해 environment.yml을 생성합니다. 외부 bioconda 채널을 그대로 사용하지 않습니다.",
-                ToolSourceRoute.InternalSeed => "내부 시드 레시피도 실제 설치 가능한 runtime recipe로 정규화됩니다. 이 이미지는 실행 노드가 아니라 tool runtime 재료입니다.",
+                ToolSourceRoute.ExternalConda => "검색 metadata는 channeldata.json 기반입니다. dependency lock은 아직 preview-only이며, 실제 lock은 repodata 또는 conda-lock 단계에서 확정됩니다.",
+                ToolSourceRoute.LocalPackageMirror => "내부 미러 경로는 local channel을 사용해 environment.yml을 생성합니다. mirror와 snapshot metadata가 recipe fingerprint seed에 포함됩니다.",
+                ToolSourceRoute.InternalSeed => "내부 시드 레시피는 local-bioconda / local-conda-forge 기준으로 생성됩니다. 이 이미지는 실행 노드가 아니라 tool runtime 재료입니다.",
                 _ => "이 route는 아직 부분 fixture 기반이지만 Candidate → Recipe → Generated 구조로 정규화됩니다. 실제 command와 entrypoint는 이후 wrapper 단계에서 정의합니다.",
             };
             OpenRecipePreviewButton.IsEnabled = true;
@@ -257,6 +257,9 @@ namespace NodeKit_POC.UI
             RecipeVersionTagText.Text = _selectedRecipe.RecipeVersion;
             RecipeFingerprintText.Text = _generatedRecipe.RecipeFingerprint;
             RecipeReproSeedText.Text = _selectedRecipe.ReproducibilitySeed;
+            RecipeEnvironmentHashText.Text = _generatedRecipe.EnvironmentYamlHash ?? "not-generated";
+            RecipeDockerfileHashText.Text = _generatedRecipe.DockerfileHash;
+            RecipeImageDigestText.Text = "not built yet";
             RuntimePolicyText.Text = "이 이미지는 단일 Tool runtime image 재료입니다. 특정 command 또는 entrypoint를 고정하지 않으며, 실제 실행 script와 command는 이후 wrapper 또는 DAG node 이미지 단계에서 정의합니다.";
             RecipePackagesBox.Text = _selectedRecipe.Packages.Count == 0
                 ? "# primary tool package preview unavailable"
@@ -265,6 +268,9 @@ namespace NodeKit_POC.UI
                     _selectedRecipe.Packages.Select(package =>
                         $"{package.Name}={package.Version} channel={package.Channel} platform={package.Platform}"));
             ResolvedDependenciesBox.Text = "preview-only\nlock 단계에서 의존 패키지와 build string이 확정됩니다.";
+            SearchAndLockStatusBox.Text = _selectedRecipe.SourceRoute == ToolSourceRoute.ExternalConda
+                ? "searchMetadata: channeldata.json\nlockPreview: preview-only\nactualLock: repodata / conda-lock 단계에서 확정\nimageDigest: build 후 확정"
+                : "searchMetadata: internal fixture or source metadata\nlockPreview: preview-only\nactualLock: 내부 resolver 또는 bundle 단계에서 확정\nimageDigest: build 후 확정";
             LockMetadataBox.Text = _generatedRecipe.LockMetadata ?? "# lock metadata preview unavailable";
             EnvironmentYamlPreviewBox.Text = _generatedRecipe.EnvironmentYaml ?? "# environment.yml preview unavailable";
             DockerfilePreviewBox.Text = _generatedRecipe.DockerfileContent;
@@ -302,7 +308,7 @@ namespace NodeKit_POC.UI
             {
                 return _selectedRouteFilter switch
                 {
-                    ToolSourceRoute.ExternalConda => "Bioconda package 후보를 실제로 조회합니다. 검색 결과는 ToolInstallRecipe로 정규화된 뒤 environment.yml과 multi-stage Dockerfile로 이어집니다.",
+                    ToolSourceRoute.ExternalConda => "Bioconda package 후보를 실제로 조회합니다. 검색은 channeldata.json 기반이고, dependency lock은 아직 preview-only입니다.",
                     ToolSourceRoute.ExternalGitHubRelease => "GitHub Release route는 현재 fixture 기반 preview입니다. 이후 release metadata 수집과 source build generator가 붙을 자리입니다.",
                     ToolSourceRoute.ExternalOciRegistry => "OCI Registry route는 기존 image를 runtime 출발점으로 보는 흐름을 검증합니다.",
                     null => "외부 route 전체를 비교합니다. Bioconda, GitHub Release, OCI Registry 후보를 한 화면에서 비교할 수 있습니다.",
@@ -312,8 +318,8 @@ namespace NodeKit_POC.UI
 
             return _selectedRouteFilter switch
             {
-                ToolSourceRoute.InternalSeed => "내부 시드 레시피를 출발점으로 사용하는 흐름입니다.",
-                ToolSourceRoute.LocalPackageMirror => "내부 패키지 미러를 사용하는 흐름입니다.",
+                ToolSourceRoute.InternalSeed => "내부 시드 레시피를 출발점으로 사용합니다. local-bioconda snapshot metadata를 기준으로 recipe를 만듭니다.",
+                ToolSourceRoute.LocalPackageMirror => "내부 패키지 미러를 사용합니다. local mirror와 snapshot metadata가 recipe identity에 반영됩니다.",
                 ToolSourceRoute.RecipeBundle => "반입된 recipe bundle을 사용하는 흐름입니다.",
                 ToolSourceRoute.InternalOciRegistry => "내부 Harbor/Registry의 기존 이미지를 사용하는 흐름입니다.",
                 _ => string.Empty,

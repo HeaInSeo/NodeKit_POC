@@ -34,6 +34,11 @@ namespace NodeKit_POC.Services
                     candidate.Route.ToString(),
                     installMethod.ToString(),
                     string.Join(",", packages.Select(package => $"{package.Name}={package.Version}@{package.Channel}")),
+                    string.Join(
+                        ",",
+                        metadata
+                            .OrderBy(item => item.Key, StringComparer.OrdinalIgnoreCase)
+                            .Select(item => $"{item.Key}={item.Value}")),
                 });
 
             return new ToolInstallRecipe(
