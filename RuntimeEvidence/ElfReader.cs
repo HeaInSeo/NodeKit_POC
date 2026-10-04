@@ -13,7 +13,7 @@ internal static class ElfReader
     private const string Method = "static-read";
 
     private const uint PtLoad = 1, PtDynamic = 2, PtInterp = 3;
-    private const long DtNull = 0, DtNeeded = 1, DtStrtab = 5, DtRpath = 15, DtRunpath = 29;
+    private const long DtNull = 0, DtNeeded = 1, DtStrtab = 5, DtStrsz = 10, DtRpath = 15, DtRunpath = 29;
 
     private sealed class FormatException(string message) : Exception(message);
 
@@ -83,7 +83,7 @@ internal static class ElfReader
         var segments = new List<Segment>();
         for (var i = 0; i < phnum; i++)
         {
-            var off = Checked(phoff + (ulong)i * phentsize, (ulong)(is64 ? 56 : 32), b, "program header");
+            var off = Checked(Add(phoff, (ulong)i * phentsize, "program header"), (ulong)(is64 ? 56 : 32), b, "program header");
             segments.Add(is64
                 ? new Segment(r.U32(off), r.U64(off + 8), r.U64(off + 16), r.U64(off + 32))
                 : new Segment(r.U32(off), r.U32(off + 4), r.U32(off + 8), r.U32(off + 16)));
@@ -135,12 +135,12 @@ internal static class ElfReader
             items.Add(new Evidence("unknown", "DT_NEEDED/RPATH present but no DT_STRTAB", "elf:PT_DYNAMIC", Method));
             return;
         }
-        var strOff = VaddrToOffset(segments, strtab.Value);
-        if (strOff is null)
+        if (FileSpan(segments, strtab.Value, b.Length) is null)
         {
-            items.Add(new Evidence("unknown", $"DT_STRTAB 0x{strtab.Value:x} is not inside any PT_LOAD segment", "elf:DT_STRTAB", Method));
+            items.Add(new Evidence("unknown", $"DT_STRTAB 0x{strtab.Value:x} is not inside a file-backed PT_LOAD segment", "elf:DT_STRTAB", Method));
             return;
         }
+        var strsz = entries.Where(e => e.Tag == DtStrsz).Select(e => (ulong?)e.Val).FirstOrDefault();
         foreach (var (tag, val) in strings)
         {
             var (kind, source) = tag switch
@@ -149,27 +149,56 @@ internal static class ElfReader
                 DtRunpath => ("elf-runpath", "elf:DT_RUNPATH"),
                 _ => ("elf-rpath", "elf:DT_RPATH"),
             };
-            var at = strOff.Value + val;
-            if (at >= (ulong)b.Length)
+            if (val >= strsz)
             {
-                items.Add(new Evidence("unknown", $"{source} string offset outside file", source, Method));
+                items.Add(new Evidence("unknown", $"{source} string offset {val} beyond DT_STRSZ {strsz}", source, Method));
                 continue;
             }
-            items.Add(new Evidence(kind, CString(b, (int)at, b.Length - (int)at), source, Method));
+            // Map strtab+val as one virtual address: adding val to a file offset could wrap or
+            // leave the segment and land on unrelated bytes.
+            var span = val > ulong.MaxValue - strtab.Value ? null : FileSpan(segments, strtab.Value + val, b.Length);
+            if (span is null)
+            {
+                items.Add(new Evidence("unknown", $"{source} string offset {val} is not inside a file-backed PT_LOAD segment", source, Method));
+                continue;
+            }
+            var (at, end) = span.Value;
+            var max = strsz is null ? end - at : (int)Math.Min((ulong)(end - at), strsz.Value - val);
+            try
+            {
+                items.Add(new Evidence(kind, CString(b, at, max), source, Method));
+            }
+            catch (FormatException e)
+            {
+                items.Add(new Evidence("unknown", $"{source} {e.Message}", source, Method));
+            }
         }
     }
 
-    private static ulong? VaddrToOffset(List<Segment> segments, ulong vaddr)
+    /// <summary>
+    /// Maps a virtual address through the PT_LOAD segment containing it in its file-backed part.
+    /// Returns the file offset and the end of that segment's file bytes, or null when no such
+    /// segment exists or the segment's file bytes are not entirely inside the file.
+    /// </summary>
+    private static (int At, int End)? FileSpan(List<Segment> segments, ulong vaddr, int fileLength)
     {
         foreach (var s in segments.Where(s => s.Type == PtLoad))
         {
-            if (vaddr >= s.Vaddr && vaddr < s.Vaddr + s.FileSize)
+            if (vaddr < s.Vaddr || vaddr - s.Vaddr >= s.FileSize)
             {
-                return s.Offset + (vaddr - s.Vaddr);
+                continue;
             }
+            if (s.Offset > (ulong)fileLength || s.FileSize > (ulong)fileLength - s.Offset)
+            {
+                continue;
+            }
+            return ((int)(s.Offset + (vaddr - s.Vaddr)), (int)(s.Offset + s.FileSize));
         }
         return null;
     }
+
+    private static ulong Add(ulong a, ulong b, string what) =>
+        a > ulong.MaxValue - b ? throw new FormatException($"{what} offset overflows") : a + b;
 
     private static string MachineName(ushort m) => m switch
     {

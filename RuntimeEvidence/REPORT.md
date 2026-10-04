@@ -11,7 +11,9 @@ Feasibility evidence for Console Decision 39 "Runtime Requirement Discovery". Th
 
 Each evidence item has `kind`, `value`, `source` (where in the artifact, e.g. `elf:PT_INTERP`, `elf:DT_NEEDED`, `shebang:line1`, `posix:mode`) and `method` (`static-read`).
 
-Read-only by construction: files are read with `File.ReadAllBytes`; nothing is executed, fetched, installed or written; symlinks are reported, never followed (so a link out of the root is not read).
+Read-only by construction: files are read with `File.ReadAllBytes`; nothing is executed, fetched, installed or written; symlinks are reported, never followed (so a link out of the root is not read). Before any open, each entry is classified with `statx(AT_SYMLINK_NOFOLLOW)`; only regular files are read, and FIFOs, sockets and devices are reported as unknown without being opened (an open on a FIFO would block, a read of a device could be endless).
+
+ELF offsets are overflow-checked. `DT_NEEDED`/`DT_RUNPATH`/`DT_RPATH` strings are located by mapping `DT_STRTAB + offset` as one virtual address through a `PT_LOAD` segment whose file-backed bytes lie entirely inside the file, and are read only up to the end of that segment (and `DT_STRSZ` when present). Wrap-around, out-of-file segments and offsets past `DT_STRSZ` become unknown rather than evidence read from unrelated bytes.
 
 ## Commands, expected and actual
 
@@ -30,6 +32,8 @@ Environment: seoy, .NET SDK 10.0.201.
 1. **Dynamic ELF** `bin/tool` — ELF64 LE x86_64 `DYN` synthesised byte by byte with `PT_LOAD`, `PT_INTERP`, `PT_DYNAMIC` (`DT_NEEDED` ×2, `DT_RUNPATH`, `DT_STRTAB`). Reported: format, architecture, type, interpreter, needed libraries in order, runpath, linkage = dynamic; no unknowns.
 2. **Shebang scripts** — `bin/run.sh` (`#!/usr/bin/env python3`): interpreter `/usr/bin/env`, argument `python3`, plus an explicit unknown that the concrete interpreter is resolved through PATH at run time. `bin/wrapper` (`#!/bin/bash -eu`): interpreter `/bin/bash`, argument `-eu`, no unknown.
 3. **Unanalysable** — `bin/broken` (ELF magic, truncated header) → `unknown: ELF not fully analysable …`, no fabricated interpreter/needed. `bin/mystery` (execute bit, unknown format) → executable candidate + unknown. `bin/escape` (symlink out of the root) → unknown "symlink not followed". `share/README.txt` (no execute bit, no magic) → not a candidate.
+
+4. **Hardening regressions** (`HardeningTests`) — a FIFO and a Unix socket in the root → unknown "not opened", collection finishes (10 s timeout guards against a blocking open); a `DT_NEEDED` offset that wraps `DT_STRTAB + offset` onto the `PT_INTERP` string, a `PT_LOAD` `p_offset` that wraps, and a `PT_LOAD` whose file size extends past the file → unknown, no fabricated `DT_NEEDED`; a wrapping `e_phoff` → `ELF not fully analysable`.
 
 Determinism: two runs on one root, and a run on a second root whose entries were created in the reverse order at a different temp path, produce byte-identical JSON; the report contains no host path, time or environment data. Input immutability: SHA-256, mode, mtime and symlink targets of every entry are unchanged after collection.
 
@@ -56,7 +60,8 @@ Determinism: two runs on one root, and a run on a second root whose entries were
 - Section headers are not used; dynamic information comes from program headers only (the loader's view).
 - Whole files are read into memory; very large artifacts were not measured.
 - Only ELF32/ELF64 with standard layouts were tested (synthetic x86_64 DYN and one real x86_64 binary). Big-endian and other machines are decoded but not covered by a test.
-- POSIX-only tests (execute bits, symlinks).
+- POSIX-only tests (execute bits, symlinks, FIFO/socket).
+- File-type classification uses Linux `statx`; on other non-Windows systems every entry is reported as unknown ("file type not determinable") rather than opened. An entry swapped for a FIFO between the `statx` and the read is not defended against (the input root is assumed not to change during collection).
 
 ## Production integration proposal (proposal only — no production code changed)
 

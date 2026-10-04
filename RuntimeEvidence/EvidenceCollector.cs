@@ -6,7 +6,7 @@ namespace RuntimeEvidence;
 /// <summary>
 /// Collects runtime-requirement evidence from a local, unpacked Tool root by reading bytes only.
 /// It never executes the artifact, never fetches or installs anything, never follows symlinks,
-/// and never writes to the root. Anything it cannot establish is reported as "unknown" rather
+/// never opens anything but regular files, and never writes to the root. Anything it cannot establish is reported as "unknown" rather
 /// than guessed.
 /// </summary>
 public static class EvidenceCollector
@@ -56,6 +56,13 @@ public static class EvidenceCollector
             if (Directory.Exists(entry))
             {
                 Walk(root, entry, files);
+                continue;
+            }
+            if (FileType.NonRegular(entry) is { } nonRegular)
+            {
+                files.Add(new FileEvidence(rel, [
+                    new Evidence("unknown", $"{nonRegular}; not opened (only regular files are analysed)", "fs:lstat", ReadMethod),
+                ]));
                 continue;
             }
             var evidence = AnalyseFile(entry);
