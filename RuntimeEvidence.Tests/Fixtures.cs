@@ -26,6 +26,7 @@ internal static class Fixtures
             () => Write(root, "bin/tool", DynamicElf(), Exec),
             () => Write(root, "bin/run.sh", Encoding.UTF8.GetBytes("#!/usr/bin/env python3\nprint('hi')\n"), Exec),
             () => Write(root, "bin/wrapper", Encoding.UTF8.GetBytes("#!/bin/bash -eu\nexec \"$@\"\n"), Exec),
+            () => Write(root, "bin/multi", Encoding.UTF8.GetBytes("#!/bin/tool first\t second  \n"), Exec),
             () => Write(root, "bin/broken", [0x7F, (byte)'E', (byte)'L', (byte)'F', 2, 1, 1, 0, 0, 0], Exec),
             () => Write(root, "bin/mystery", Encoding.UTF8.GetBytes("not a known executable format\n"), Exec),
             () => Write(root, "share/README.txt", Encoding.UTF8.GetBytes("documentation\n"), Plain),

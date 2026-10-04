@@ -43,6 +43,14 @@ public sealed class EvidenceCollectorTests : IDisposable
     }
 
     [Fact]
+    public void ShebangTail_IsOneArgumentLikeLinuxExecve()
+    {
+        var multi = File(EvidenceCollector.Collect(_root), "bin/multi");
+        Assert.Equal(["/bin/tool"], Values(multi, "shebang-interpreter"));
+        Assert.Equal(["first\t second"], Values(multi, "shebang-argument"));
+    }
+
+    [Fact]
     public void CorruptAndUnrecognised_AreUnknownNotGuessed()
     {
         var report = EvidenceCollector.Collect(_root);

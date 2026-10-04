@@ -143,19 +143,23 @@ public static class EvidenceCollector
             yield return new Evidence("unknown", "empty shebang interpreter", "shebang:line1", ReadMethod);
             yield break;
         }
-        var parts = line.Split((char[])[' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
-        yield return new Evidence("shebang-interpreter", parts[0], "shebang:line1", ReadMethod);
-        foreach (var arg in parts.Skip(1))
+        // Linux execve: the interpreter ends at the first space/tab and the whole remaining tail is
+        // passed as a single optional argument (no further word splitting).
+        var split = line.IndexOfAny([' ', '\t']);
+        var interpreter = split < 0 ? line : line[..split];
+        yield return new Evidence("shebang-interpreter", interpreter, "shebang:line1", ReadMethod);
+        var tail = split < 0 ? "" : line[split..].TrimStart(' ', '\t');
+        if (tail.Length > 0)
         {
-            yield return new Evidence("shebang-argument", arg, "shebang:line1", ReadMethod);
+            yield return new Evidence("shebang-argument", tail, "shebang:line1", ReadMethod);
         }
-        if (parts[0].EndsWith("/env", StringComparison.Ordinal))
+        if (interpreter.EndsWith("/env", StringComparison.Ordinal))
         {
             yield return new Evidence("unknown",
                 "interpreter resolved through env PATH lookup at run time; the concrete interpreter and its version are not determined",
                 "shebang:line1", ReadMethod);
         }
-        else if (!parts[0].StartsWith('/'))
+        else if (!interpreter.StartsWith('/'))
         {
             yield return new Evidence("unknown", "relative interpreter path; resolution depends on the working directory", "shebang:line1", ReadMethod);
         }
