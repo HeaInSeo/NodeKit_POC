@@ -59,7 +59,11 @@ internal static class ElfReader
         var machine = r.U16(18);
         items.Add(new Evidence("elf-type", type switch
         {
-            1 => "REL", 2 => "EXEC", 3 => "DYN", 4 => "CORE", _ => $"0x{type:x}",
+            1 => "REL",
+            2 => "EXEC",
+            3 => "DYN",
+            4 => "CORE",
+            _ => $"0x{type:x}",
         }, "elf:e_type", Method));
         items.Add(new Evidence("architecture", MachineName(machine), "elf:e_machine", Method));
 
